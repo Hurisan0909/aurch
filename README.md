@@ -44,9 +44,47 @@ aurch は**簡易チェッカー**です。パターンマッチによる目安�
 最終的なPKGBUILDの内容確認は yay/paru の `--review` 機能に委ねます。
 インストール時に必ずレビュー表示でPKGBUILDをご確認ください。
 
-## ビルド・テスト
+## インストール（ビルド）
+
+前提：Go 1.19+、および AUR helper（paru または yay）がインストール済みであること。
 
 ```sh
+# 1. ソースを取得
+git clone https://github.com/example/aurch.git
+cd aurch
+
+# 2. 依存ダウンロード＆ビルド
+go mod download
 go build -o aurch .
-go test ./...
+
+# 3. システムに配置（任意）
+sudo install -m 755 aurch /usr/local/bin/
+
+# 検証
+aurch --help 2>/dev/null || go test ./...
+```
+
+Arch系ディストリビューションならAUR経由も想定（将来）：`yay -S aurch`
+
+## 使い方
+
+```sh
+aurch <package-name>        # 例: aurch visual-studio-code-bin
+```
+
+TUI上のキー操作：
+
+| キー | 動作 |
+|---|---|
+| `j` / `↓` | 検知行リストを1行スクロール |
+| `k` / `↑` | 検知行リストを1行逆スクロール |
+| `i` | 作業ディレクトリを削除し、paru/yay でインストール実行（--review付き） |
+| `q` / `esc` / `ctrl+c` | 終了（作業ディレクトリは自動削除） |
+
+### 使用例
+
+```sh
+$ aurch some-aur-package
+# → TUIが開き、ツリーと検出行、⚠️ N件検出 が表示される
+# → j/k で確認し、問題なければ i でインストール（レビュー表示に従う）
 ```
